@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Victoria Stec" />
+<meta name="author" content="Victoria S." />
 
 <meta name="date" content="2025-10-23" />
 
@@ -343,7 +343,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Assignment 1: Rmd and GitHub</h1>
-<h4 class="author">Victoria Stec</h4>
+<h4 class="author">Victoria S.</h4>
 <h4 class="date">October 23, 2025</h4>
 
 </div>
@@ -353,7 +353,7 @@ div.tocify {
 <h1>Overview</h1>
 <p>In this project, I created a geovisualization and pie chart depicting
 where and how often social media photos are taken near rock climbing
-walls in Boulder, CO, using the <code>ggplot</code>, <code>sf</code>,
+walls in Boulder, CO, using the <code>ggplot2</code>, <code>sf</code>,
 and <code>tidyverse</code> packages.</p>
 </div>
 <div id="data-methods" class="section level1">
@@ -364,7 +364,7 @@ library(sf)
 library(tidyverse)</code></pre>
 <p>Next, I loaded in my dataset and projected the data to UTM Zone
 13N.</p>
-<pre class="r"><code>boulder &lt;- st_read(&quot;C:/Users/Victoria Stec/Documents/Geovisualization/AdvGeovisLab1/BoulderSocialMedia/BoulderSocialMedia.shp&quot;)</code></pre>
+<pre class="r"><code>boulder &lt;- st_read(&quot;../BoulderSocialMedia/BoulderSocialMedia.shp&quot;)</code></pre>
 <pre><code>## Reading layer `BoulderSocialMedia&#39; from data source 
 ##   `C:\Users\Victoria Stec\Documents\Geovisualization\AdvGeovisLab1\BoulderSocialMedia\BoulderSocialMedia.shp&#39; 
 ##   using driver `ESRI Shapefile&#39;
@@ -429,11 +429,11 @@ ggplot(pie_data, aes(x = &quot;&quot;, y = percent, fill = close_to_climbing)) +
 <div id="reflection" class="section level1">
 <h1>Reflection</h1>
 <p>Through this project, I learned how to use R markdown files, how to
-better use <code>ggplot</code> to visualize both maps and charts, and
+better use <code>ggplot2</code> to visualize both maps and charts, and
 some insights into the photos taken in Boulder. R markdown files allow R
 scripts to be integrated into an HTML file so that code chunks and
 resulting visualizations can be presented in a legible and appealing
-way. <code>ggplot</code> is a powerful library that provides tools to
+way. <code>ggplot2</code> is a powerful library that provides tools to
 customize maps and charts. All of the elements of the plots can be fine
 tuned to a users specific needs and the end results are clean, simple
 figures. From my simple analysis, I learned that rock climbing is quite

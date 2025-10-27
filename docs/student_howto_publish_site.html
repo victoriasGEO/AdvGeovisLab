@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Your Name" />
+
+<meta name="date" content="2025-10-13" />
+
+<title>How to Edit Your R Markdown Website &amp; Publish with GitHub Pages</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">About</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">About</a>
+</li>
+<li>
+  <a href="analyses.html">Analyses</a>
+</li>
+<li>
+  <a href="contact.html">Contact</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">How to Edit Your R Markdown Website &amp;
+Publish with GitHub Pages</h1>
+<h4 class="author">Your Name</h4>
+<h4 class="date">2025-10-13</h4>
+
+</div>
+
+
+<blockquote>
+<p><strong>What this is:</strong> A quick guide you can knit and read in
+the browser. It explains <strong>how to modify the starter
+files</strong>, <strong>knit the site</strong>, and <strong>publish
+it</strong> either with <strong>Git in RStudio</strong> or by
+<strong>manual upload</strong>.</p>
+</blockquote>
+<div id="what-files-do-i-edit" class="section level2">
+<h2>1) What files do I edit?</h2>
+<p>Your starter includes (at minimum):</p>
+<ul>
+<li><code>_site.yml</code> — website settings (title, navbar, output
+folder).</li>
+<li><code>index.Rmd</code> — your <strong>About</strong> page.</li>
+<li><code>analyses.Rmd</code> — a page that <strong>links</strong> to
+your analyses (HTML files).</li>
+<li><code>assignment-1.Rmd</code> — your first analysis (you will knit
+this).</li>
+<li><code>template-analysis.Rmd</code> — copy this to make more
+analyses.</li>
+<li><code>contact.Rmd</code> — your links.</li>
+<li><code>styles.css</code> — optional look-and-feel tweaks.</li>
+<li><code>img/</code> — put photos/images here (e.g., your profile
+pic).</li>
+</ul>
+</div>
+<div id="edit-the-site-title-and-navbar" class="section level2">
+<h2>2) Edit the site title and navbar</h2>
+<p>Open **_site.yml** and change the title and links.</p>
+<pre class="yaml"><code>name: &quot;my-personal-site&quot;
+title: &quot;Your Name — Portfolio&quot;
+output_dir: &quot;docs&quot;
+navbar:
+  title: &quot;About&quot;
+  left:
+    - text: &quot;About&quot;
+      href: index.html
+    - text: &quot;Analyses&quot;
+      href: analyses.html
+    - text: &quot;Contact&quot;
+      href: contact.html
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    css: styles.css</code></pre>
+<blockquote>
+<p>Add a new top-level page by creating <code>mypage.Rmd</code>,
+knitting it (so <code>mypage.html</code> exists), then adding it to
+<code>navbar.left</code>.</p>
+</blockquote>
+</div>
+<div id="customize-your-about-page" class="section level2">
+<h2>3) Customize your About page</h2>
+<p>Edit <strong>index.Rmd</strong>: write a short bio and add a
+photo.</p>
+<pre class="r"><code>
+
+# Hello! I&#39;m Your Name
+
+I study X, Y, and Z. This site hosts my work and assignments.
+
+&lt;img src=&quot;img/profile_example.png&quot; width=&quot;300px&quot; /&gt;</code></pre>
+</div>
+<div id="add-an-analysis-and-link-to-it" class="section level2">
+<h2>4) Add an analysis and link to it</h2>
+<ol style="list-style-type: decimal">
+<li>Open <strong>assignment-1.Rmd</strong> and edit the analysis (code +
+text).</li>
+<li>Knit it → this creates <strong>assignment-1.html</strong> in the
+<strong>docs/</strong> folder.</li>
+<li>Open <strong>analyses.Rmd</strong> and add a link:</li>
+</ol>
+<pre class="markdown"><code>- [assignment-1.html](assignment-1.html) — short description of what this analysis shows.</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Knit the whole site (see below).</li>
+</ol>
+<blockquote>
+<p>To add more work later: copy <strong>template-analysis.Rmd</strong> →
+<code>my-analysis.Rmd</code>, knit it, then link
+<code>[my-analysis.html](my-analysis.html)</code> in
+<strong>analyses.Rmd</strong>.</p>
+</blockquote>
+</div>
+<div id="knit-the-site-build-all-pages" class="section level2">
+<h2>5) Knit the site (build all pages)</h2>
+<p>Use the <strong>Build Website</strong> button in RStudio, or run:</p>
+<p>This renders each <code>.Rmd</code> to <code>.html</code> and writes
+everything to <strong>docs/</strong> (GitHub Pages will publish from
+there).</p>
+</div>
+<div id="publish-with-git-in-rstudio-recommended"
+class="section level2">
+<h2>6) Publish with Git in RStudio (recommended)</h2>
+<ol style="list-style-type: decimal">
+<li>In the <strong>Git</strong> pane, <strong>Stage</strong> all changed
+files (including <strong>docs/</strong>).</li>
+<li>Enter a message (e.g., <em>“Initial site”</em>) and click
+<strong>Commit</strong>.</li>
+<li>Click <strong>Push</strong> to upload to GitHub.</li>
+<li>On GitHub: <strong>Settings → Pages →</strong> Source = <em>Deploy
+from a branch</em>; <strong>Branch</strong> = <code>main</code>;
+<strong>Folder</strong> = <code>/docs</code>;
+<strong>Save</strong>.</li>
+</ol>
+<blockquote>
+<p>After a minute, your site is live at the URL GitHub shows. Share
+it!</p>
+</blockquote>
+<div id="optional-git-from-the-terminal" class="section level3">
+<h3>(Optional) Git from the Terminal</h3>
+<pre class="bash"><code>git add -A
+git commit -m &quot;Update site&quot;
+git push origin main</code></pre>
+</div>
+</div>
+<div id="publish-by-manual-upload-if-not-using-git-locally"
+class="section level2">
+<h2>7) Publish by manual upload (if not using Git locally)</h2>
+<p>You can do this, but you still <strong>must knit locally</strong> so
+the <code>docs/</code> HTML files exist.</p>
+<ol style="list-style-type: decimal">
+<li>Go to your repo on GitHub → <strong>Add file → Upload
+files</strong>.</li>
+<li>Upload everything <strong>including</strong> the
+<strong>docs/</strong> folder.</li>
+<li>Enable <strong>Pages</strong> the same way as above (main +
+/docs).</li>
+</ol>
+</div>
+<div id="common-pitfalls" class="section level2">
+<h2>8) Common pitfalls</h2>
+<ul>
+<li><strong>Site is blank/404:</strong> Did you push the
+<strong>docs/</strong> folder? Check Pages settings (main + /docs).</li>
+<li><strong>Navbar link 404:</strong> The link points to
+<code>file.html</code> but you didn’t knit the <code>.Rmd</code> (no
+<code>.html</code> exists yet), or the filename is wrong.</li>
+<li><strong>Duplicate chunk label ‘setup’:</strong> Use unique labels
+like <code>setup_about</code>, <code>setup_show</code>, etc.</li>
+<li><strong>Packages missing:</strong> Install and
+<code>library(ggplot2)</code> as needed.</li>
+<li><strong>Images don’t show:</strong> Confirm the path (e.g.,
+<code>img/myphoto.png</code>) and that you committed the image.</li>
+</ul>
+</div>
+<div id="quick-checklist" class="section level2">
+<h2>9) Quick checklist</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" />Edit <code>_site.yml</code> (title,
+navbar).<br />
+</label></li>
+<li><label><input type="checkbox" />Customize <code>index.Rmd</code>
+(bio + photo).<br />
+</label></li>
+<li><label><input type="checkbox" />Knit <code>assignment-1.Rmd</code> →
+<code>assignment-1.html</code>.<br />
+</label></li>
+<li><label><input type="checkbox" />Link it in
+<code>analyses.Rmd</code>.<br />
+</label></li>
+<li><label><input type="checkbox" />Run
+<code>rmarkdown::render_site()</code> to build <code>docs/</code>.<br />
+</label></li>
+<li><label><input type="checkbox" />Commit &amp; push (or upload)
+<strong>including <code>docs/</code></strong>.<br />
+</label></li>
+<li><label><input type="checkbox" />Enable GitHub Pages (main +
+/docs).</label></li>
+</ul>
+<hr />
+<div id="need-a-template-to-copy-for-new-analyses"
+class="section level3">
+<h3>Need a template to copy for new analyses?</h3>
+<p>Copy <strong>template-analysis.Rmd</strong> in your project. It
+already has a setup chunk and sections for Overview, Methods, Analysis,
+Results, Reflection.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
