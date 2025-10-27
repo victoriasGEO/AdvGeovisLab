@@ -13,12 +13,12 @@ Each analysis is an `.Rmd` that you knit to `.html`. After knitting, link to it 
 
 ## Featured: Assignment 1
 
-**Title:** Fuel economy vs. engine size (example)  
+**Title:** Assignment 1: Rmd and GitHub  
 **File:** `assignment-1.Rmd` → `assignment-1.html`
 
 - **Open the analysis:** [assignment-1.html](assignment-1.html)
-- **What it shows:** a quick plot, a small regression, and short reflections.
-- **Skills:** R Markdown, ggplot2, linear models.
+- **What it shows:** A map and pie chart of photo points near climbing walls in Boulder, CO. 
+- **Skills:** R Markdown, ggplot2, GitHub.
 
 ---
 

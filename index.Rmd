@@ -11,13 +11,11 @@ knitr::opts_chunk$set(echo = FALSE)
 
 Welcome to my personal site. This homepage is written in **R Markdown** and will be published on **GitHub Pages**.
 
-- I am interested in: _data science, maps, and sustainability_.
+- I am interested in: geospatial data science, ecological restoration, public lands. 
 - This site will grow as I add more `.Rmd` analyses under **Analyses**.
 
-## A photo of me (replace with your own)
-
-Place your images in the `img/` folder and reference them like this:
+## A photo of my favorite flower
 
 ```{r echo=FALSE, out.width='300px'}
-knitr::include_graphics('img/profile_example.png')
+knitr::include_graphics('img/monkeyflowers.jpg')
 ```

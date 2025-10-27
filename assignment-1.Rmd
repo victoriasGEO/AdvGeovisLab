@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1: Rmd and GitHub"
-author: "Victoria Stec"
+author: "Victoria S."
 date: "October 23, 2025"
 output: html_document
 ---
@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
 # Overview
-In this project, I created a geovisualization and pie chart depicting where and how often social media photos are taken near rock climbing walls in Boulder, CO, using the `ggplot`, `sf`, and `tidyverse` packages. 
+In this project, I created a geovisualization and pie chart depicting where and how often social media photos are taken near rock climbing walls in Boulder, CO, using the `ggplot2`, `sf`, and `tidyverse` packages. 
 
 # Data & methods
 First, I loaded the necessary packages.
@@ -24,7 +24,7 @@ library(tidyverse)
 Next, I loaded in my dataset and projected the data to UTM Zone 13N. 
 
 ```{r}
-boulder <- st_read("C:/Users/Victoria Stec/Documents/Geovisualization/AdvGeovisLab1/BoulderSocialMedia/BoulderSocialMedia.shp")
+boulder <- st_read("../BoulderSocialMedia/BoulderSocialMedia.shp")
 
 boulder = st_transform(boulder, 26913) 
 ```
@@ -68,7 +68,7 @@ ggplot(pie_data, aes(x = "", y = percent, fill = close_to_climbing)) +
 ```
 
 # Reflection
-Through this project, I learned how to use R markdown files, how to better use `ggplot` to visualize both maps and charts, and some insights into the photos taken in Boulder. R markdown files allow R scripts to be integrated into an HTML file so that code chunks and resulting visualizations can be presented in a legible and appealing way. `ggplot` is a powerful library that provides tools to customize maps and charts. All of the elements of the plots can be fine tuned to a users specific needs and the end results are clean, simple figures. From my simple analysis, I learned that rock climbing is quite a popular sport in Boulder as almost a quarter of the photo points from the area were taken near a climbing wall. 
+Through this project, I learned how to use R markdown files, how to better use `ggplot2` to visualize both maps and charts, and some insights into the photos taken in Boulder. R markdown files allow R scripts to be integrated into an HTML file so that code chunks and resulting visualizations can be presented in a legible and appealing way. `ggplot2` is a powerful library that provides tools to customize maps and charts. All of the elements of the plots can be fine tuned to a users specific needs and the end results are clean, simple figures. From my simple analysis, I learned that rock climbing is quite a popular sport in Boulder as almost a quarter of the photo points from the area were taken near a climbing wall. 
 
 # Lab Question 
 **Discuss the advantages and challenges associated with an open data science approach. Provide an example based on this week's reading. **
