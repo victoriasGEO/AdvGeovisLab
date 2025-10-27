@@ -1,0 +1,12 @@
+---
+title: "Contact"
+output: html_document
+---
+
+```{r setup_contact, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Get in touch
+
+- **GitHub:** https://github.com/victoriasGEO
