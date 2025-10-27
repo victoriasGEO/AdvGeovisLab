@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Victoria Stec" />
+
+<meta name="date" content="2025-10-23" />
+
+<title>Assignment 1: Rmd and GitHub</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">About</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">About</a>
+</li>
+<li>
+  <a href="analyses.html">Analyses</a>
+</li>
+<li>
+  <a href="contact.html">Contact</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Assignment 1: Rmd and GitHub</h1>
+<h4 class="author">Victoria Stec</h4>
+<h4 class="date">October 23, 2025</h4>
+
+</div>
+
+
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<p>In this project, I created a geovisualization and pie chart depicting
+where and how often social media photos are taken near rock climbing
+walls in Boulder, CO, using the <code>ggplot</code>, <code>sf</code>,
+and <code>tidyverse</code> packages.</p>
+</div>
+<div id="data-methods" class="section level1">
+<h1>Data &amp; methods</h1>
+<p>First, I loaded the necessary packages.</p>
+<pre class="r"><code>library(ggplot2)
+library(sf)
+library(tidyverse)</code></pre>
+<p>Next, I loaded in my dataset and projected the data to UTM Zone
+13N.</p>
+<pre class="r"><code>boulder &lt;- st_read(&quot;C:/Users/Victoria Stec/Documents/Geovisualization/AdvGeovisLab1/BoulderSocialMedia/BoulderSocialMedia.shp&quot;)</code></pre>
+<pre><code>## Reading layer `BoulderSocialMedia&#39; from data source 
+##   `C:\Users\Victoria Stec\Documents\Geovisualization\AdvGeovisLab1\BoulderSocialMedia\BoulderSocialMedia.shp&#39; 
+##   using driver `ESRI Shapefile&#39;
+## Simple feature collection with 55519 features and 12 fields
+## Geometry type: POINT
+## Dimension:     XY
+## Bounding box:  xmin: -788775 ymin: 1917813 xmax: -780555 ymax: 1930053
+## Projected CRS: NAD_1983_Albers</code></pre>
+<pre class="r"><code>boulder = st_transform(boulder, 26913) </code></pre>
+</div>
+<div id="visualization" class="section level1">
+<h1>Visualization</h1>
+<p>As an avid rock climber myself, I was interested in visualizing where
+in Boulder photos were taken near climbing walls. First, I found which
+points were within 100 m of a climbing wall and tagged them as TRUE, and
+tagged points farther than 100 m from a climbing wall as FALSE. Points
+that were close to climbing walls were then symbolized as green and
+those that were not as gray. I also added a descriptive title and legend
+labels.</p>
+<pre class="r"><code>boulder %&gt;%
+  filter(DB ==  &#39;Pano&#39; | DB == &#39;Flickr&#39;) %&gt;%
+  mutate(close_to_climbing = ifelse(Climb_dist &lt;= 100, TRUE, FALSE))%&gt;% 
+  ggplot() +
+  geom_sf(aes(color=close_to_climbing),
+          fill = NA, alpha = 1)  +  
+  scale_color_manual(values = c(&quot;TRUE&quot; = &quot;green&quot;, &quot;FALSE&quot; = &quot;gray&quot;),
+                     labels = c(&quot;Farther than 100M&quot;,&quot;Within 100M&quot;)
+                     ) +
+  ggtitle(&quot;Photo Points Near a Climbing Wall&quot;)+
+  labs(color=NULL)+
+  theme_bw()</code></pre>
+<p><img src="assignment-1_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="small-analysis" class="section level1">
+<h1>Small analysis</h1>
+<p>Next, I wanted to see how many of the photo points were near a
+climbing wall out of the total number of points. I again filtered the
+data for just social media points and marked which ones were within 100
+m of a climbing wall and which ones were not. I then summarized how many
+points were near climbing walls and calculated the total percentages.
+After calculating these percentages, I created a pie chart to visually
+represent them.</p>
+<pre class="r"><code># Summarize data for pie chart
+pie_data &lt;- boulder %&gt;%
+  filter(DB %in% c(&#39;Pano&#39;, &#39;Flickr&#39;)) %&gt;%
+  mutate(close_to_climbing = ifelse(Climb_dist &lt;= 100, &quot;Within 100M&quot;, &quot;Farther than 100M&quot;)) %&gt;%
+  count(close_to_climbing) %&gt;%
+  mutate(percent = n / sum(n) * 100)
+
+# Create pie chart
+ggplot(pie_data, aes(x = &quot;&quot;, y = percent, fill = close_to_climbing)) +
+  geom_bar(stat = &quot;identity&quot;, width = 1) +
+  coord_polar(theta = &quot;y&quot;) +       # convert to pie
+  geom_text(aes(label = paste0(round(percent), &quot;%&quot;)), 
+            position = position_stack(vjust = 0.5)) + # add labels inside slices
+  scale_fill_manual(values = c(&quot;Within 100M&quot; = &quot;green&quot;, &quot;Farther than 100M&quot; = &quot;gray&quot;)) +
+  labs(fill = NULL) +  # remove legend title
+  theme_void() +                   # remove axes/background
+  ggtitle(&quot;Percentage of Photo Points Near a Climbing Wall&quot;)</code></pre>
+<p><img src="assignment-1_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="reflection" class="section level1">
+<h1>Reflection</h1>
+<p>Through this project, I learned how to use R markdown files, how to
+better use <code>ggplot</code> to visualize both maps and charts, and
+some insights into the photos taken in Boulder. R markdown files allow R
+scripts to be integrated into an HTML file so that code chunks and
+resulting visualizations can be presented in a legible and appealing
+way. <code>ggplot</code> is a powerful library that provides tools to
+customize maps and charts. All of the elements of the plots can be fine
+tuned to a users specific needs and the end results are clean, simple
+figures. From my simple analysis, I learned that rock climbing is quite
+a popular sport in Boulder as almost a quarter of the photo points from
+the area were taken near a climbing wall.</p>
+</div>
+<div id="lab-question" class="section level1">
+<h1>Lab Question</h1>
+<p><strong>Discuss the advantages and challenges associated with an open
+data science approach. Provide an example based on this week’s reading.
+</strong></p>
+<p>There are many benefits to open data science. Being transparent about
+the data and the methods used to analyze the data creates trust between
+the scientist and the audience. Beyond creating a sense of trust,
+transparency also contributes to another advantage of open data:
+verification. With access to the data and methods, others can verify
+that the outcomes of the analysis are actually accurate. Open data
+science practices also have the potential to create new knowledge. When
+more people have access to the data/methods, new ideas on how to apply
+the data or methods to different projects can arise.</p>
+<p>A potential challenge that comes with open data science is protecting
+privacy. When releasing a data set for public use, it is extremely
+important that the privacy of anyone whose data was collected as a part
+of the data set is protected and any identifying information is
+obscured. For example, from this week’s reading, “Big data and human
+geography: Opportunities, challenges, and risks” by Rob Kitchin, a large
+data set on U.S. voters was collected by the Obama campaign but never
+made public. This data set could be useful to many projects if made
+public, but the privacy of individuals whose data was collected must be
+protected.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

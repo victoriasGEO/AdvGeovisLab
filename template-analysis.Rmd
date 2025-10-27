@@ -1,0 +1,30 @@
+---
+title: "Analysis Title"
+author: "Your Name"
+output: html_document
+---
+
+```{r setup_template, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Overview
+Briefly describe your research question and why it matters.
+
+# Data & methods
+Describe your data source(s) and any cleaning steps.
+
+```{r}
+# load packages and data here
+```
+
+# Analysis
+```{r}
+# analysis code, plots, tables
+```
+
+# Results
+Summarize key findings in plain language. Include figures/tables above.
+
+# Reflection
+Limitations, follow-ups, and what you'd do next.

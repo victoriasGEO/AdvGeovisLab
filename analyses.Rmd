@@ -1,0 +1,31 @@
+---
+title: "Analyses & Projects"
+output: html_document
+---
+
+```{r setup_analyses, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# How to use this page
+
+Each analysis is an `.Rmd` that you knit to `.html`. After knitting, link to it from here.
+
+## Featured: Assignment 1
+
+**Title:** Fuel economy vs. engine size (example)  
+**File:** `assignment-1.Rmd` → `assignment-1.html`
+
+- **Open the analysis:** [assignment-1.html](assignment-1.html)
+- **What it shows:** a quick plot, a small regression, and short reflections.
+- **Skills:** R Markdown, ggplot2, linear models.
+
+---
+
+## Add more analyses
+
+1. Copy `template-analysis.Rmd` to a new filename (e.g., `my-analysis.Rmd`).  
+2. Knit to generate `my-analysis.html`.  
+3. Add a bullet/link here:
+
+- _Example placeholder_: [my-analysis.html](my-analysis.html) — short description.

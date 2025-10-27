@@ -1,0 +1,19 @@
+name: "my-personal-site"
+title: "My Personal Site"
+output_dir: "docs"
+navbar:
+  title: "About"
+  left:
+    - text: "About"
+      href: index.html
+    - text: "Analyses"
+      href: analyses.html
+    - text: "Contact"
+      href: contact.html
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    css: styles.css

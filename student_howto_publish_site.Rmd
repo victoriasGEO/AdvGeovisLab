@@ -1,0 +1,149 @@
+---
+title: "How to Edit Your R Markdown Website & Publish with GitHub Pages"
+author: "Your Name"
+date: "2025-10-13"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+---
+
+> **What this is:** A quick guide you can knit and read in the browser. It explains **how to modify the starter files**, **knit the site**, and **publish it** either with **Git in RStudio** or by **manual upload**.
+
+## 1) What files do I edit?
+
+Your starter includes (at minimum):
+
+- `_site.yml` — website settings (title, navbar, output folder).
+- `index.Rmd` — your **About** page.
+- `analyses.Rmd` — a page that **links** to your analyses (HTML files).
+- `assignment-1.Rmd` — your first analysis (you will knit this).
+- `template-analysis.Rmd` — copy this to make more analyses.
+- `contact.Rmd` — your links.
+- `styles.css` — optional look-and-feel tweaks.
+- `img/` — put photos/images here (e.g., your profile pic).
+
+## 2) Edit the site title and navbar
+
+Open **_site.yml** and change the title and links.
+
+```yaml
+name: "my-personal-site"
+title: "Your Name — Portfolio"
+output_dir: "docs"
+navbar:
+  title: "About"
+  left:
+    - text: "About"
+      href: index.html
+    - text: "Analyses"
+      href: analyses.html
+    - text: "Contact"
+      href: contact.html
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    css: styles.css
+```
+
+> Add a new top-level page by creating `mypage.Rmd`, knitting it (so `mypage.html` exists), then adding it to `navbar.left`.
+
+## 3) Customize your About page
+
+Edit **index.Rmd**: write a short bio and add a photo.
+
+```r
+```{r setup_about, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Hello! I'm Your Name
+
+I study X, Y, and Z. This site hosts my work and assignments.
+
+```{r, echo=FALSE, out.width='300px'}
+# Put your image in img/ and update the filename
+knitr::include_graphics("img/profile_example.png")
+```
+```
+
+## 4) Add an analysis and link to it
+
+1. Open **assignment-1.Rmd** and edit the analysis (code + text).
+2. Knit it → this creates **assignment-1.html** in the **docs/** folder.
+3. Open **analyses.Rmd** and add a link:
+
+```markdown
+- [assignment-1.html](assignment-1.html) — short description of what this analysis shows.
+```
+
+4. Knit the whole site (see below).
+
+> To add more work later: copy **template-analysis.Rmd** → `my-analysis.Rmd`, knit it, then link `[my-analysis.html](my-analysis.html)` in **analyses.Rmd**.
+
+## 5) Knit the site (build all pages)
+
+Use the **Build Website** button in RStudio, or run:
+
+
+```{r}
+#install.packages(c("rmarkdown","knitr","ggplot2"))  # first time only
+#rmarkdown::render_site()  # builds the site into docs/
+```
+
+
+This renders each `.Rmd` to `.html` and writes everything to **docs/** (GitHub Pages will publish from there).
+
+## 6) Publish with Git in RStudio (recommended)
+
+1. In the **Git** pane, **Stage** all changed files (including **docs/**).
+2. Enter a message (e.g., *"Initial site"*) and click **Commit**.
+3. Click **Push** to upload to GitHub.
+4. On GitHub: **Settings → Pages →** Source = *Deploy from a branch*; **Branch** = `main`; **Folder** = `/docs`; **Save**.
+
+> After a minute, your site is live at the URL GitHub shows. Share it!
+
+### (Optional) Git from the Terminal
+
+```bash
+git add -A
+git commit -m "Update site"
+git push origin main
+```
+
+## 7) Publish by manual upload (if not using Git locally)
+
+You can do this, but you still **must knit locally** so the `docs/` HTML files exist.
+
+1. Go to your repo on GitHub → **Add file → Upload files**.
+2. Upload everything **including** the **docs/** folder.
+3. Enable **Pages** the same way as above (main + /docs).
+
+
+## 8) Common pitfalls
+
+- **Site is blank/404:** Did you push the **docs/** folder? Check Pages settings (main + /docs).
+- **Navbar link 404:** The link points to `file.html` but you didn’t knit the `.Rmd` (no `.html` exists yet), or the filename is wrong.
+- **Duplicate chunk label 'setup':** Use unique labels like `setup_about`, `setup_show`, etc.
+- **Packages missing:** Install and `library(ggplot2)` as needed.
+- **Images don’t show:** Confirm the path (e.g., `img/myphoto.png`) and that you committed the image.
+
+## 9) Quick checklist
+
+- [ ] Edit `_site.yml` (title, navbar).  
+- [ ] Customize `index.Rmd` (bio + photo).  
+- [ ] Knit `assignment-1.Rmd` → `assignment-1.html`.  
+- [ ] Link it in `analyses.Rmd`.  
+- [ ] Run `rmarkdown::render_site()` to build `docs/`.  
+- [ ] Commit & push (or upload) **including `docs/`**.  
+- [ ] Enable GitHub Pages (main + /docs).
+
+---
+
+### Need a template to copy for new analyses?
+
+Copy **template-analysis.Rmd** in your project. It already has a setup chunk and sections for Overview, Methods, Analysis, Results, Reflection.

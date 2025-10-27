@@ -1,0 +1,14 @@
+---
+title: "Contact"
+output: html_document
+---
+
+```{r setup_contact, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Get in touch
+
+- **Email:** your.name@example.edu  
+- **GitHub:** https://github.com/your-handle  
+- **LinkedIn:** https://www.linkedin.com/in/your-handle

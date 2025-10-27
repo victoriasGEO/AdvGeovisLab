@@ -1,0 +1,23 @@
+---
+title: "About Me"
+output: html_document
+---
+
+```{r setup_index, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Hello!
+
+Welcome to my personal site. This homepage is written in **R Markdown** and will be published on **GitHub Pages**.
+
+- I am interested in: _data science, maps, and sustainability_.
+- This site will grow as I add more `.Rmd` analyses under **Analyses**.
+
+## A photo of me (replace with your own)
+
+Place your images in the `img/` folder and reference them like this:
+
+```{r echo=FALSE, out.width='300px'}
+knitr::include_graphics('img/profile_example.png')
+```
