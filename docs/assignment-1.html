@@ -364,16 +364,9 @@ library(sf)
 library(tidyverse)</code></pre>
 <p>Next, I loaded in my dataset and projected the data to UTM Zone
 13N.</p>
-<pre class="r"><code>boulder &lt;- st_read(&quot;../BoulderSocialMedia/BoulderSocialMedia.shp&quot;)</code></pre>
-<pre><code>## Reading layer `BoulderSocialMedia&#39; from data source 
-##   `C:\Users\Victoria Stec\Documents\Geovisualization\AdvGeovisLab1\BoulderSocialMedia\BoulderSocialMedia.shp&#39; 
-##   using driver `ESRI Shapefile&#39;
-## Simple feature collection with 55519 features and 12 fields
-## Geometry type: POINT
-## Dimension:     XY
-## Bounding box:  xmin: -788775 ymin: 1917813 xmax: -780555 ymax: 1930053
-## Projected CRS: NAD_1983_Albers</code></pre>
-<pre class="r"><code>boulder = st_transform(boulder, 26913) </code></pre>
+<pre class="r"><code>boulder &lt;- st_read(&quot;../BoulderSocialMedia/BoulderSocialMedia.shp&quot;)
+
+boulder = st_transform(boulder, 26913) </code></pre>
 </div>
 <div id="visualization" class="section level1">
 <h1>Visualization</h1>
