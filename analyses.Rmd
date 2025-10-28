@@ -7,10 +7,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-# How to use this page
-
-Each analysis is an `.Rmd` that you knit to `.html`. After knitting, link to it from here.
-
 ## Featured: Assignment 1
 
 **Title:** Assignment 1: Analyzing Rock Climbing Photo Points in Boulder, CO, Using R Markdown and GitHub  
@@ -20,12 +16,4 @@ Each analysis is an `.Rmd` that you knit to `.html`. After knitting, link to it 
 - **What it shows:** A map and pie chart of photo points near climbing walls in Boulder, CO. 
 - **Skills:** R Markdown, ggplot2, GitHub.
 
----
 
-## Add more analyses
-
-1. Copy `template-analysis.Rmd` to a new filename (e.g., `my-analysis.Rmd`).  
-2. Knit to generate `my-analysis.html`.  
-3. Add a bullet/link here:
-
-- _Example placeholder_: [my-analysis.html](my-analysis.html) — short description.
