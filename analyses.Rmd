@@ -15,5 +15,3 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 - **Open the analysis:** [assignment-1.html](assignment-1.html)
 - **What it shows:** A map and pie chart of photo points near climbing walls in Boulder, CO. 
 - **Skills:** R Markdown, ggplot2, GitHub.
-
-

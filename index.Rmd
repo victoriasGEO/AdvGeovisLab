@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 # Hello!
 
-My name is Victoria and welcome to my personal site. This homepage is written in **R Markdown** and will be published on **GitHub Pages**.
+I am Victoria and welcome to my personal site. This homepage is written in **R Markdown** and will be published on **GitHub Pages**.
 
 - I am interested in: geospatial data science, ecological restoration, and public lands. 
 - This site will grow as I add more `.Rmd` analyses under **Analyses**.
@@ -20,4 +20,3 @@ My name is Victoria and welcome to my personal site. This homepage is written in
 ```{r echo=FALSE, out.width='300px'}
 knitr::include_graphics('img/monkeyflowers.jpg')
 ```
-
