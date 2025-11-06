@@ -7,7 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-## Featured: Assignment 1
+Assignment 1
 
 **Title:** Assignment 1: Analyzing Rock Climbing Photo Points in Boulder, CO, Using R Markdown and GitHub  
 **File:** `assignment-1.Rmd` → `assignment-1.html`
@@ -15,3 +15,12 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 - **Open the analysis:** [assignment-1.html](assignment-1.html)
 - **What it shows:** A map and pie chart of photo points near climbing walls in Boulder, CO. 
 - **Skills:** R Markdown, ggplot2, GitHub.
+
+Assignment 2
+
+**Title:** Assignment 2: Using LiDAR to Analyze Slope Steepness in El Portal, CA  
+**File:** `assignment-2.Rmd` → `assignment-2.html`
+
+- **Open the analysis:** [assignment-2.html](assignment-2.html)
+- **What it shows:** A geovisualization of slope steepness in El Portal, CA. 
+- **Skills:** LiDAR, R Markdown.

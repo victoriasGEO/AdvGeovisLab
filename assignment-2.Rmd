@@ -1,0 +1,85 @@
+---
+title: "Assignment 2: Using LiDAR to Analyze Slope Steepness in El Portal, CA"
+author: "Victoria S."
+output: html_document
+date: "October 30, 2025"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+For this project, my goal was to visualize the steepness of slopes above the town of El Portal. Visualizing these slopes was of interest to me as it is a major project site for the Invasive Plant Program at Yosemite National Park. Treating invasive plants in this area is challenging and strenuous due to the extremely steep slopes. El Portal is an administrative area of the park that lies just outside the Arch Rock entrance gate. 
+
+## Geovisualization
+To being creating my geovisualization, I loaded in all necessary libraries. 
+```{r, echo=TRUE, message=FALSE, warning=FALSE, results='hide'}
+library(sf)
+library(terra)
+library(tmap)
+library(tmaptools)
+library(lidR)
+library(ggplot2)
+library(gstat)
+library(ggspatial)
+library(raster)
+library(viridis)
+library(RColorBrewer)
+```
+
+Next, I loaded in my LiDAR data that covers the area of interest. To capture the whole area, I needed data from two LiDAR tiles so I merged them into a single .las file. 
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE, results='hide'}
+files <- list.files("Pointclouds_ElPortal", pattern = "\\.laz$", full.names = TRUE)
+
+las_list <- lapply(files, readLAS)
+las_merged <- do.call(rbind, las_list)
+
+writeLAS(las_merged, "EP_Slopes.las")
+
+las <- readLAS("EP_Slopes.las")
+
+```
+
+The merged .las file covered a slightly larger area than I needed so I clipped the area to a smaller extent. Once I had the LiDAR data for the extact area I wanted, I created a TIN using it. 
+```{r}
+bbox <- st_bbox(c(xmin=-119.79501, xmax=-119.78042, ymin=37.67387, ymax=37.68019),
+                   crs = 4326)  # WGS84
+
+bbox_utm <- st_transform(st_as_sfc(bbox), crs = st_crs(las))
+utm_coords <- st_bbox(bbox_utm)
+
+las_crop <- clip_rectangle(las,
+                           xleft   = utm_coords["xmin"],
+                           ybottom = utm_coords["ymin"],
+                           xright  = utm_coords["xmax"],
+                           ytop    = utm_coords["ymax"])
+
+ep_TIN <- grid_terrain(las_crop, res = 1, algorithm = tin())
+plot(ep_TIN, main = "El Portal Slopes: Elevation",legend.args = list(text = "Elevation (Meters)", side = 4, font = 2, line = 2.5, cex = 1))
+```
+
+I was interested in viewing how steep the slopes are so I calculated this using my TIN then plotted it. 
+
+```{r}
+slope <- terrain(ep_TIN, v = "slope", unit = "degrees")
+
+cols <- brewer.pal(9, "OrRd")
+plot(slope, 
+     col = cols, 
+     main = "El Portal Slopes: Slope Steepness",
+     legend.args = list(text = "Slope (Degrees)", side = 4, font = 2, line = 2.5, cex = 1)
+)
+```
+
+
+## Research Methodology
+The slopes above El Portal in Yosemite National Park are a major project site for the Invasive Plant Management program. Invasive Yellow Star-Thistle has gained a foothold in the area and the crew climbs up and down steep hills and cliffs to treat this aggressive plant. I wanted to use LiDAR to visualize the terrain and measure slope steepness in the area. To do so, I downloaded LiDAR tiles from the 2019 Yosemite LiDAR project off of the USGS Lidar Explorer website. To calculate slope steepness, I created a TIN using the LiDAR point clouds. From the TIN, I was able to calculate the slope angles across the landscape. My final visualization was able to show that the slopes are in fact very steep with some work areas reaching angles of 70 degrees. 
+
+My visualization would be very useful in project planning. By visualizing slope, the safest routes to access Yellow star-thistle populations could be determined. Areas with very extreme slopes could also be demarcated as not being safe to work in at all. 
+
+3D geovisualization has the advantage of potentially being more immersive or easily interpretable. We perceive the world in 3D so a 3D geovisualization could be more intuitive to understand. One drawback of 3D geovisualization is the need for more computing power. Adding another dimension to the data and rendering visualizations in 3D is more computationally intensive. Another complexity is that a 3D geovisualization is often rendered in 2D on a computer monitor.  
+
+With 3D technology like virtual reality or possibly 3D printing, 3D geovisualizations could be better displayed. Virtual reality could allow a viewer to be fully immersed in a new space and actually view a 3D geovisualization in 3D. 3D printing could provide a tactile and interactive way to view a 3D visualization. All of these technologies could open up new avenues for making geovisualizations immersive and intuitive. 
+
