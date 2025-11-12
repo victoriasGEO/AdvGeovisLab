@@ -24,3 +24,13 @@ Assignment 2
 - **Open the analysis:** [assignment-2.html](assignment-2.html)
 - **What it shows:** A geovisualization of slope steepness in El Portal, CA. 
 - **Skills:** LiDAR, R Markdown.
+
+
+Assignment 3
+
+**Title:** Assignment 3: Most Common Land Cover Types in Michigan Flickr Photos Across Time
+**File:** `assignment-3.Rmd` → `assignment-3.html`
+
+- **Open the analysis:** [assignment-3.html](assignment-3.html)
+- **What it shows:** Visualizations of trends in land cover classes in Michigan Flickr photos.  
+- **Skills:** Spatiotemporal analysis, animation, R Markdown.

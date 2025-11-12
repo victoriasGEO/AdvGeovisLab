@@ -1,0 +1,170 @@
+---
+title: "Assignment 3: Most Common Land Cover Types in Michigan Flickr Photos Across Time"
+author: "Victoria S."
+output: html_document
+date: "2025-11-06"
+---
+
+## Introduction
+In this project, I ask the question "does the land cover type where photos are taken change over the course of the year?". I hypothesize that the most common land cover class will change over a year, with water being popular in the summer, planted/cultivated and forest being more popular in the fall, herbaceous popular in the spring, and developed popular in the winter. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+To begin, I first loaded in my libraries and data. 
+```{r, echo=TRUE, message=FALSE, warning=FALSE, results='hide'}
+library(readr)
+library(ggplot2)
+library(dplyr)
+library(gganimate)
+library(lubridate)
+library(gifski)
+
+MIFlickr <- read.csv("MichiganFlickr.csv")
+```
+
+Next, I converted the time values from the original data into a more usable format. 
+```{r}
+MIFlickr <- MIFlickr %>%
+  mutate(
+    date = as.POSIXct(dateupload, origin = "1970-01-01", tz = "UTC"),
+    date = as.Date(date),
+
+    year  = year(date),
+    month = factor(month(date, label = TRUE, abbr = TRUE),
+                   levels = month.abb, ordered = TRUE),
+    day   = day(date),
+    count = 1L
+  )
+```
+
+Then I gathered the photos from 2010-2017 and found the most common land cover from each month of every year. I reclassified the land cover data into broader categories and added a field for the name of each land cover class. 
+```{r}
+most_common_landcover <- MIFlickr %>%
+  filter(year >= 2010 & year < 2018) %>%
+  group_by(year, month, Landuse) %>%
+  summarise(photo_count = n(), .groups = "drop_last") %>%
+  slice_max(order_by = photo_count, n = 1, with_ties = FALSE) %>%
+  arrange(year, month)
+
+most_common_landcover <- most_common_landcover %>%
+  mutate(Landcover_trunc = Landuse %/% 10)
+
+most_common_landcover <- most_common_landcover %>%
+  mutate(
+    Landcover_name = case_when(
+      Landcover_trunc == 1 ~ "Water",
+      Landcover_trunc == 2 ~ "Developed",
+      Landcover_trunc == 3 ~ "Barren",
+      Landcover_trunc == 4 ~ "Forest",
+      Landcover_trunc == 5 ~ "Shrubland",
+      Landcover_trunc == 7 ~ "Herbaceous",
+      Landcover_trunc == 8 ~ "Planted/Cultuvated",
+      Landcover_trunc == 9 ~ "Wetlands"
+    )
+  )
+```
+
+I then made a static and animated plot of the data, as well as a table with how many months each land cover class was most dominant. 
+```{r}
+ggplot(most_common_landcover, aes(x = month, y = Landcover_name, group = year)) +
+    geom_line(aes(color = as.factor(year)), linewidth = 1.5, alpha = 0.3) +
+    geom_point(aes(color = as.factor(year)), size = 2, shape = 21, fill = "white", stroke = 1.2) +
+    scale_color_discrete(name = "Year") + 
+    labs(title = "Most Common Land Cover of Michigan Photos Across Time", x = "", y = "Land Cover Class") +
+   theme_classic()
+
+animation1 <- ggplot(most_common_landcover, aes(x = month, y = Landcover_name, group = year)) +
+  geom_line(aes(color = as.factor(year)), linewidth = 1.5, alpha = 0.7) +
+  geom_point(aes(color = as.factor(year)), size = 2, shape = 21, fill = "white", stroke = 1.2) +
+  scale_color_discrete(name = "Year") +
+  labs(title = "Most Common Land Cover of Michigan Photos Across Time",
+       subtitle = "Year: {closest_state}", x = "", y = "Land Cover Class") +
+  theme_classic() +
+  transition_states(year, transition_length = 2, state_length = 7)
+
+#animate(animation1, nframes = 100, fps = 5, width = 600, height = 400)
+
+#anim_save("most_common_landcover.gif", animation = animation1)
+
+landcover_summary <- most_common_landcover %>%
+  group_by(Landcover_name) %>%
+  summarise(total_months = n()) %>%
+  mutate(percent = round(100 * total_months / sum(total_months), 1)) %>%
+  arrange(desc(total_months))
+
+landcover_summary
+
+```
+![](most_common_landcover.gif)
+
+## Results
+
+I wanted to explore whether where people take photos changes over the course of the year. After analyzing the data, my hypothesis was not strongly supported. There was not as much variation in land cover class between months as I would have thought. The most obvious trend observed from this dataset is the dominance of developed land cover types. Developed was most popular land cover class in almost 90% of the months in the dataset. 2014 and 2016 only had developed as the most popular land cover class throughout the entire year. This is likely due to people taking photos in the developed areas where they live. 
+
+The variation that does exist tends to happen later in the year in the summer and fall. The months that water became the most most common land cover class were July and August. This slight trend makes sense as people are likely spending more time near the water during the summer months and taking photos while there. The Jan-Feb and Aug-Sep spikes in forest images could be due to winter snow fall or people travelling during these times. The spikes in planted/cultivated land cover classes could be due to plants growing in the spring or people visiting farms in the fall. 
+
+## Noise
+
+A major source of noise in the Michigan Flickr data arises from a user uploading many photos at once. In this data set, there were months where single users uploaded 1000+ photos within a single land cover class. This can heavily skew the data towards whatever a single person was taking photos of, rather than viewing larger trends across the Flickr user base. 
+
+For example, a user uploaded 3,669 forest photos in September 2011. In my original visualization of the data, forest was the most common land cover type in September 2011. To reduce the impact of single users uploading many photos at in one month, I capped each user's contribution to the total number of photographs per land cover class per month to ten photos. 
+```{r}
+user_monthly_counts <- MIFlickr %>%
+  filter(year >= 2010 & year < 2018) %>%
+  group_by(owner, year, month, Landuse) %>%
+  summarise(photos_per_user_month = n(), .groups = "drop") %>%
+  mutate(weighted_photos = pmin(photos_per_user_month, 10))
+```
+
+After capping the contributions of individual users, I analyzed the data with the same methods used previously. 
+```{r}
+most_common_landcover_weighted <- user_monthly_counts %>%
+  group_by(year, month, Landuse) %>%
+  summarise(total_photos = sum(weighted_photos), .groups = "drop") %>%
+  group_by(year, month) %>%
+  slice_max(order_by = total_photos, n = 1, with_ties = FALSE) %>%
+  arrange(year, month)
+
+most_common_landcover_weighted <- most_common_landcover_weighted %>%
+  mutate(
+    Landcover_trunc = Landuse %/% 10,
+    Landcover_name = case_when(
+      Landcover_trunc == 1 ~ "Water",
+      Landcover_trunc == 2 ~ "Developed",
+      Landcover_trunc == 3 ~ "Barren",
+      Landcover_trunc == 4 ~ "Forest",
+      Landcover_trunc == 5 ~ "Shrubland",
+      Landcover_trunc == 7 ~ "Herbaceous",
+      Landcover_trunc == 8 ~ "Planted/Cultivated",
+      Landcover_trunc == 9 ~ "Wetlands"
+    )
+  )
+
+ggplot(most_common_landcover_weighted, aes(x = month, y = Landcover_name, group = year)) +
+    geom_line(aes(color = as.factor(year)), linewidth = 1.5, alpha = 0.3) +
+    geom_point(aes(color = as.factor(year)), size = 2, shape = 21, fill = "white", stroke = 1.2) +
+    scale_color_discrete(name = "Year") + 
+    labs(title = "Most Common Land Cover of Michigan Photos Across Time (Reduced Noise)", x = "", y = "Land Cover Class") +
+   theme_classic()
+
+animation2 <- ggplot(most_common_landcover_weighted, aes(x = month, y = Landcover_name, group = year)) +
+  geom_line(aes(color = as.factor(year)), linewidth = 1.5, alpha = 0.7) +
+  geom_point(aes(color = as.factor(year)), size = 2, shape = 21, fill = "white", stroke = 1.2) +
+  scale_color_discrete(name = "Year") +
+  labs(title = "Most Common Land Cover of Michigan Photos Across Time (Reduced Noise)",
+       subtitle = "Year: {closest_state}", x = "", y = "Land Cover Class") +
+  theme_classic() +
+  transition_states(year, transition_length = 2, state_length = 7)
+
+#animate(animation2, nframes = 100, fps = 5, width = 600, height = 400)
+
+#anim_save("most_common_landcover_weighted.gif", animation = animation2)
+
+```
+![](most_common_landcover_weighted.gif)
+
+After capping photo contributions, the user that originally uploaded 3,669 forest photos in September 2011 now only added ten forest photos to the total count. This caused the common land use in September 2011 to switch from forest to developed. After reducing noise in the data, the developed land cover class became even more dominant with only two outliers in July 2015 and September 2016 that had water as the most common land cover class. 
+
+My original hypothesis that the most common land cover class would change over the course of the year was further proven wrong after reducing the noise in the data. These results support the idea that people are likely taking most of their pictures closer to home. Its possible that some users may take a lot of photos while away from developed areas and upload them all at once, but this does not reflect broader trends in photo locations across the Flickr user base. 
