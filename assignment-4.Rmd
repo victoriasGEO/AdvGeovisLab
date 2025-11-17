@@ -1,0 +1,122 @@
+---
+title: "Assignment 4: Sentiment Analysis of Taylor Swift's 'Track Fives'"
+author: "Victoria S."
+date: "2025-11-13"
+output: html_document
+---
+
+## Simple Sentiment Analysis
+The fifth track on Taylor Swift's albums have a reputation for being the saddest or most emotional songs on an album. I wanted to see if this reputation was supported by simple sentiment analysis models. 
+
+To begin, I loaded in my data set containing the lyrics of all of the track fives, as well as necessary libraries. 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE, results='hide'}
+library(tidytext)
+library(textdata)
+library(tidyverse)
+library(stringr)
+library(sentimentr)
+library(knitr)
+library(kableExtra)
+
+trackfives <- read.csv("TS_Track_5.csv")
+```
+
+I then calculated the overall sentiment for each line in each song using the afinn lexicon and plotted them.
+```{r}
+trackfives$Text <- as.character(trackfives$Text)
+
+trackfives_tidy <- trackfives %>%
+  group_by(Song) %>%
+  ungroup() %>%
+  unnest_tokens(word,Text)
+
+trackfives_sentiment <- trackfives_tidy %>%
+  inner_join(get_sentiments("afinn")) %>%
+  group_by(Song, Line) %>%
+  summarize(sentiment = sum(value), .groups = "drop")
+
+ggplot(trackfives_sentiment, aes(Line, sentiment, fill = Song)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~Song, scales = "free_x")
+```
+
+Using this simple analysis, the songs appear to have a much more positive or mixed sentiment than I expected. Next, I wanted to calculate an overall average sentiment value for each song. 
+```{r}
+trackfives_sentiment_overall <- trackfives_tidy %>%
+  inner_join(get_sentiments("afinn")) %>%
+  group_by(Song) %>%
+  summarize(overall_sentiment = mean(value), .groups = "drop")
+
+trackfives_sentiment_overall %>%
+  arrange(overall_sentiment)
+
+total_sentiment_all_songs <- trackfives_tidy %>%
+  inner_join(get_sentiments("afinn")) %>%
+  summarize(total_sentiment = mean(value))
+
+```
+
+In these charts and tables, negative values represent negative sentiment while positive represent positive sentiment. Some of these results seem accurate as "my tears ricochet" and "Dear John" are quite sad songs and were given overall negative average sentiment. Others seem less accurate though, as "tolerate it" and "All Too Well" were rated as being positive but are actually sad songs. The average sentiment value across all 12 songs was 0.054. This value is almost neutral and I was surprised that it was not more negative. 
+
+Next, I used a more complex sentiment analysis package to see if the results would be different. 
+```{r}
+trackfives_sentimentr <- trackfives %>%
+    get_sentences() %>%
+    sentiment_by(by = c('Song', 'Text'))%>%
+  as.data.frame()
+
+ggplot(trackfives_sentimentr, aes(Text, ave_sentiment, fill = Song)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~Song)+
+  labs(x = "Line")
+
+avg_sentiment_per_song <- trackfives_sentimentr %>%
+  group_by(Song) %>%
+  summarize(average_sentiment = mean(ave_sentiment), .groups = "drop") %>%
+  arrange(average_sentiment)
+
+overall_average_sentiment <- mean(trackfives_sentimentr$ave_sentiment)
+
+avg_sentiment_per_song
+overall_average_sentiment
+```
+This analysis rated the average sentiment of all the songs as almost neutral. The songs it rated as most negative are sad songs but were still not given strongly negative ratings. It is interesting that this model found "Eldest Daughter" to be the most positive of all the songs while the simpler model found the same song to be the most negative. 
+
+These two sentiment analyses did not find Taylor Swift's track fives to be very negative. This may be due to how these models take words literally or do not understand context. Often times, song lyrics are not meant to be taken literally and are used to paint a picture. These simple sentiment analyses that look at single words/lines may miss out on context between words/lines or misinterpret how a word/line is being used within the song. The instrumental track behind the lyrics also can play a huge part in the sentiment of a song and can change how lyrics are interpreted. In addition to missing out on the context of words within a song, these analyses also miss out on the influence of the instrumental track in determining the sentiment of a song. 
+
+## AI Sentiment Analysis
+
+I prompted U-M GPT to "Rate the sentiment of these song lyrics. The scale is from -5 being the most negative and 5 being most positive. Give examples of why you rated the song as such. I will give you a csv with all the songs. Return me a csv with the rating for each song and summary of why you rated it that."
+
+This is what it returned: 
+```{r}
+umgpt_analysis <- read.csv("umgpt_song_ratings.csv", fileEncoding = "latin1")
+
+umgpt_analysis <- as.data.frame(lapply(umgpt_analysis, function(x) {
+  if (is.character(x)) enc2utf8(x) else x
+}))
+
+umgpt_analysis %>%
+  kable(
+    format = "html",
+    caption = "U-M GPT Track Five Sentiment Analysis",
+    align = "cl",
+    escape = FALSE
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover"),
+    full_width = FALSE,
+    position = "center",
+    font_size = 14
+  ) %>%
+  row_spec(0, bold = TRUE, background = "#f0f0f0") %>%
+  column_spec(2, width = "120px") %>% 
+  column_spec(3, width = "350px")
+
+```
+
+The sentiment analysis done by U-M GPT understood context much better than the other sentiment analysis models. The ratings it produced are much closer to how I would rate the songs than the other models. Its analysis of "All Too Well" is a good example of how this model was able to understand the context of the words and lyrics within the entire song. Many of the lyrics would appear positive as Swift reflects on what used to be happy moments, but are now painful memories after the relationship ended. Positive lyrics such as "'Cause there we are again in the middle of the night/We're dancing ‘round the kitchen in the refrigerator light/Down the stairs, I was there/I remember it all too well, yeah" were given neutral or slightly positive values by the simpler sentiment models, but because U-M GPT understood these lines in the context of the whole song, it knew that "I remember it all too well"  is meant in a negative way. Similarly to the simple models, U-M GPT also misses out on the influence of the instrumentals on a song's sentiment. Overall, U-M GPT did a much better job at understanding the sentiment of Taylor Swift's track fives than the simple models. 

@@ -34,3 +34,12 @@ Assignment 3
 - **Open the analysis:** [assignment-3.html](assignment-3.html)
 - **What it shows:** Visualizations of trends in land cover classes in Michigan Flickr photos.  
 - **Skills:** Spatiotemporal analysis, animation, R Markdown.
+
+Assignment 4
+
+**Title:** Assignment 4: Sentiment Analysis of Taylor Swift's 'Track Fives'
+**File:** `assignment-4.Rmd` → `assignment-4.html`
+
+- **Open the analysis:** [assignment-4.html](assignment-4.html)
+- **What it shows:** Charts and tables describing the sentiment of Taylor Swift songs.   
+- **Skills:**  Sentiment analysis, R Markdown.
