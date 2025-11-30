@@ -1,0 +1,173 @@
+---
+title: "Assignment 5: Generalized Linear Models and Clustering"
+author: "Victoria S."
+date: "2025-11-20"
+output: html_document
+---
+
+## Generalized Linear Model
+
+I will be using raster data from Salt Lake City to create and fit a model that shows how well different variables explain urban change in the area. The code is from Dr. Van Berkel and model interpretation is done by myself. 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+First, necessary libraries and the datasets were loaded in. Then all the individual rasters were combined into one raster stack which was then converted into a data frame. 
+```{r, echo=TRUE, message=FALSE, warning=FALSE, results='hide'}  
+library(terra)
+library(tidyverse)
+library(leaflet)
+library(ROCR)
+library(plyr)
+library(reshape2)
+library(plotly)
+
+#first import the land cover/use data 
+NLCD_2001 <- rast("NLCD_2001_SL.tif")
+NLCD_2004 <- rast("NLCD_2004_SL.tif")
+NLCD_2006 <- rast("NLCD_2006_SL.tif")
+NLCD_2008 <- rast("NLCD_2008_SL.tif")
+NLCD_2011 <- rast("NLCD_2011_SL.tif")
+NLCD_2013 <- rast("NLCD_2013_SL.tif")
+NLCD_2016 <- rast("NLCD_2016_SL.tif")
+# Distance to parks and protected areas in km (Euclidian) for the study area
+Park_dist <- rast("Parks_dist_SL.tif")
+# Road density for a 1 km neighborhood
+Rd_dns1km <- rast("Rd_dns1km_SL.tif")
+# Distance to water bodies in km (Euclidean)
+WaterDist <- rast("WaterDist_SL.tif")
+# elevation
+DEM <- rast("DEM_SL.tif")
+
+allrasters <- c(NLCD_2001, NLCD_2004, NLCD_2006, NLCD_2008, NLCD_2011, NLCD_2013, NLCD_2016, Park_dist, Rd_dns1km, WaterDist,DEM)
+
+allrastersSL <- as.data.frame(allrasters, xy=TRUE)
+## Here we are filtering out the no data values (stored as 128)
+allrastersSL <- allrastersSL %>%
+  filter (NLCD_2001_SL != 128)
+```
+
+Next, all the pixels whose cover class value changed to urban any time from 2001 to 2016 were found.
+```{r}
+allrastersSL <- allrastersSL %>%
+    mutate(urbanChg = (NLCD_2001_SL != 21 & NLCD_2001_SL != 22 & NLCD_2001_SL != 23 & NLCD_2001_SL != 24) &  (NLCD_2016_SL == 21 | NLCD_2016_SL == 22  | NLCD_2016_SL == 23 | NLCD_2016_SL == 24)) 
+    
+```
+
+Then, a random sample of the data was taken. A generalized linear model was then fit to the data. Values important to assessing the fit of the model were generated, including the coefficients, z values, ROC, and AUC. 
+```{r}
+SL <- allrastersSL %>%
+  filter(NLCD_2001_SL != 21 & NLCD_2001_SL != 22 & NLCD_2001_SL != 23 & NLCD_2001_SL != 24) 
+SL <- SL[10:14]
+SLmelt<-melt(SL)
+
+###Grab all the developed cells (presence)
+newUrban <- SL %>%
+  filter(urbanChg == TRUE)
+
+###Grab all the nondeveloped and not previously urban cells (absence)
+nonUrban <- SL %>%
+  filter(urbanChg == FALSE)
+
+###Get a random sample of the absence data  
+### that is twice as large as the presence data
+index <- sample(1:nrow(nonUrban), (round(nrow(newUrban)* 2)))
+SLsampleUrban <- nonUrban[index, ]
+
+### combine the orginal presence and absence data
+SLsample <- cbind(SLsampleUrban, newUrban)
+
+###Consider a train and testing sample by futher subsampling the data
+index <- sample(1:nrow(SL), (round(nrow(SL)* 0.01)))
+SLsample <- SL[index, ]
+
+
+fit <- glm(urbanChg ~ Parks_dist_SL + Rd_dns1km_SL + WaterDist_SL + DEM_SL,data=SLsample,family=binomial())
+summary(fit)
+
+## Loading required package: gplots
+
+# plot a ROC curve for a single prediction run
+# and color the curve according to cutoff.
+pred <- prediction(predict(fit), SLsample$urbanChg)
+perf <- performance(pred,"tpr","fpr")
+plot(perf,colorize=TRUE)
+## A simpler way to understand these result is to calculate the
+## area under the curve(AUC). The closer this number is to 1, the
+## better your model fit
+auc_ROCR <- performance(pred, measure = "auc")
+auc_ROCR <- auc_ROCR@y.values[[1]]
+auc_ROCR
+```
+
+In this model, coefficients show that the parks, roads, and water distance variables have a positive relationship and elevation has a negative relationship with the urban change variable. The z values and Pr(>|z|) values show that all of the variables in the model are statistically significant. The difference between the null deviance and residual deviance is 3910.6. This substantial decrease means the model fits well. 
+
+The ROC of the model additionally shows that the model fits well because it is close to the upper left corner. Lastly, the very high Area Under the Curve (AUC) value of 0.9560747 provides more evidence that the model fits well. 
+
+Taking all of these values into account, we are able to see that the model does a very good job at explaining urban change in Salt Lake City. As distance to parks/water and road density increase, the likelihood that an area will be developed also increases. As elevation increases, the likelihood that an area will be developed decreases. Other variables that I would add to the model to better explain urban development would be distance to schools or distance to grocery stores. I hypothesize that as distance to schools or grocery stores decrease, the likelihood that an area will be developed increases.
+
+## Cluster Analysis
+
+For my cluster analysis, I was interested in visualizing clusters with similar outdoor recreation amenities. 
+
+I again first loaded in packages and data. 
+```{r, echo=TRUE, message=FALSE, warning=FALSE, results='hide'}
+library(fastcluster)
+library(graphics)
+library(ggplot2)
+library(ggdendro)
+library(sf)
+
+amenData<- st_read("AmenDataAll.shp")
+```
+To find clusters with similar outdoor recreation amenities, I used variables for percent public lands, total length of hiking trails, and percent water bodies. 
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE, results='hide'}
+st_geometry(amenData)
+geomData = st_sfc(amenData$geometry)
+
+amenDataDF<-amenData[,c("ser00publi", "HikeLength","WaterPct")]
+amenDataDF <- na.omit(amenDataDF)
+amenDataDF <- as.data.frame(amenDataDF)[1:3]
+db_scaled <- scale(amenDataDF)
+```
+
+I used k-means clustering and decided to use four clusters based off of the within groups sum of squares chart. 
+
+```{r, eval=FALSE}
+# Determine number of clusters
+wss <- (nrow(db_scaled)-1)*sum(apply(db_scaled,2,var))
+for (i in 2:15) wss[i] <- sum(kmeans(db_scaled,
+   centers=i)$withinss)
+plot(1:15, wss, type="b", xlab="Number of Clusters",
+  ylab="Within groups sum of squares")
+
+fit <- kmeans(db_scaled, 4)
+
+aggregate(db_scaled,by=list(fit$cluster),FUN=mean)
+
+amenData <- data.frame(amenData, fit$cluster)
+
+st_geometry(amenData) <- geomData
+
+```
+![](clustertable.png)
+```{r, eval=FALSE}
+amenData$cluster <- factor(amenData$fit.cluster, levels = 1:4)
+
+cluster_colors <- c("#DB7F40", "#CEED82", "#517DCF", "#458A48")
+
+ggplot() +
+  geom_sf(data = amenData, aes(fill = as.factor(fit.cluster)), color = NA) +
+  scale_fill_manual(
+    name = "Cluster Groups",              # Legend title
+    values = cluster_colors,          # Colors for each cluster
+  ) +
+  theme(legend.position = "right") +
+  ggtitle("% Public Land, Meters of Hiking Trails, and % Water Bodies Clusters")
+
+```
+![](clustermap1.png)
+
+
+The four groups that were made from the k-means clustering placed areas into a group of either mostly average values across all three variables, or into a group with either higher than average % public lands, hiking trail distances, or % water bodies. The clusters generally make sense as there is a lot more public land in the western United States and this was seen in the clusters. There is likely a lot of overlap between areas with more public land and areas with greater distances of hiking trails. Most of the country was included in the average cluster. The water bodies cluster was surprising as there were pretty large areas in this cluster and most of the area was in the more arid western United States. I expected to see more areas with higher percents of water bodies in the eastern United States. 

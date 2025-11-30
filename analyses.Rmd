@@ -43,3 +43,12 @@ Assignment 4
 - **Open the analysis:** [assignment-4.html](assignment-4.html)
 - **What it shows:** Charts and tables describing the sentiment of Taylor Swift songs.   
 - **Skills:**  Sentiment analysis, R Markdown.
+
+Assignment 5
+
+**Title:** Assignment 5: Generalized Linear Models and Clustering
+**File:** `assignment-5.Rmd` → `assignment-5.html`
+
+- **Open the analysis:** [assignment-5.html](assignment-5.html)
+- **What it shows:** Interpretation of a generalized linear model that explains urban change in Salt Lake City. A cluster analysis of outdoor recreation amenities across the United States.     
+- **Skills:**  Generalized linear models, clustering techniques, R Markdown.
